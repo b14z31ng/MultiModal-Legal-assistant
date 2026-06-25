@@ -1,0 +1,107 @@
+seed: 42
+
+project:
+  name: multimodal-risk-auditor
+  experiment_name: multimodal-risk-auditor-modal
+
+hardware:
+
+  device: cuda
+
+  mixed_precision: bf16
+
+  compile: false
+
+############################################################
+
+vision:
+
+  backbone: convnext_base.fb_in22k_ft_in1k
+
+  pretrained: true
+
+  image_size: 384
+
+############################################################
+
+text:
+
+  encoder: microsoft/deberta-v3-large
+
+  max_length: 512
+
+############################################################
+
+classifier:
+
+  hidden_dim: 1024
+
+  dropout: 0.3
+
+############################################################
+
+fusion:
+
+  hidden_dim: 1024
+
+  projection_dim: 1024
+
+  num_heads: 8
+
+  num_layers: 2
+
+############################################################
+
+training:
+
+  epochs: 1
+
+  batch_size: 64
+
+  gradient_accumulation_steps: 1
+
+  learning_rate: 0.00002
+
+  weight_decay: 0.01
+
+  warmup_ratio: 0.1
+
+  num_workers: 8
+
+  early_stopping_patience: 5
+
+############################################################
+
+optimizer:
+
+  name: adamw
+
+scheduler:
+
+  name: cosine
+
+############################################################
+
+data:
+
+  image_root: /root/multimodal-risk-auditor-dataset/raw
+
+  train_csv: /root/multimodal-risk-auditor-dataset/processed/vision/train.csv
+
+  val_csv: /root/multimodal-risk-auditor-dataset/processed/vision/val.csv
+
+############################################################
+
+paths:
+
+  checkpoint_dir: /root/checkpoints
+
+  best_checkpoint_dir: /root/checkpoints/best
+
+  last_checkpoint_dir: /root/checkpoints/last
+
+  model_dir: /root/checkpoints/models
+
+  logs_dir: /root/checkpoints/logs
+
+  mlflow_dir: /root/mlflow

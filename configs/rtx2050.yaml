@@ -1,0 +1,97 @@
+seed: 42
+
+project:
+  name: multimodal-risk-auditor
+  experiment_name: multimodal-risk-auditor
+
+data:
+
+  image_root: data/raw
+
+  train_csv: data/processed/vision/train.csv
+
+  val_csv: data/processed/vision/val.csv
+
+  num_classes: 6
+  
+training:
+  epochs: 5
+  batch_size: 2
+  learning_rate: 0.0001
+  weight_decay: 0.01
+
+  warmup_ratio: 0.1
+
+  gradient_accumulation_steps: 4
+
+  # mixed_precision: true
+  precision: fp16      # <-- ADD THIS
+
+  num_workers: 2
+  pin_memory: true
+  early_stopping_patience: 3
+  
+optimizer:
+  name: adamw
+
+scheduler:
+  name: cosine
+  warmup_ratio: 0.1
+
+evaluation:
+  threshold: 0.5
+
+paths:
+  checkpoint_dir: artifacts/checkpoints
+
+  best_checkpoint_dir: artifacts/checkpoints/best
+
+  last_checkpoint_dir: artifacts/checkpoints/last
+
+  model_dir: artifacts/models/final
+
+  mlruns_dir: mlruns
+
+  logs_dir: artifacts/logs
+
+vision:
+  enabled: false
+  encoder: resnet18
+  image_size: 224
+  backbone: convnext_base.fb_in22k_ft_in1k
+  pretrained: true
+  image_size: 384
+
+  hidden_dim: 1024
+
+  dropout: 0.30
+
+text:
+  encoder: distilbert-base-uncased
+  max_length: 256
+
+classifier:
+  num_labels: 41
+  hidden_dim: 512
+  dropout: 0.3
+
+hardware:
+  device: cuda
+  mixed_precision: fp16
+
+logging:
+  log_every: 10
+
+checkpoint:
+  save_best_only: true
+  save_last: true
+
+resume:
+  enabled: true
+
+freeze:
+  text_encoder: true
+  vision_encoder: true
+
+mlflow:
+  log_model: true

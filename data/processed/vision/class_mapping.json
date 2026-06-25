@@ -1,0 +1,8 @@
+{
+    "budget": 0,
+    "form": 1,
+    "invoice": 2,
+    "letter": 3,
+    "memo": 4,
+    "specification": 5
+}

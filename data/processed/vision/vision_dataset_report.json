@@ -1,0 +1,18 @@
+{
+    "random_seed": 42,
+    "num_classes": 6,
+    "total_images": 14916,
+    "train_images": 11932,
+    "validation_images": 1492,
+    "test_images": 1492,
+    "corrupted_images": 0,
+    "duplicate_images": 0,
+    "class_distribution": {
+        "budget": 2505,
+        "form": 2506,
+        "invoice": 2477,
+        "letter": 2464,
+        "memo": 2492,
+        "specification": 2472
+    }
+}

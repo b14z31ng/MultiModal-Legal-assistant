@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environments
+venv/
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# MLflow
+mlruns/
+mlflow.db
+artifacts/mlflow/
+
+# Checkpoints
+artifacts/checkpoints/
+
+# Trained models
+artifacts/models/final/
+*.pt
+*.pth
+
+# Logs
+artifacts/logs/
+
+# Dataset
+data/raw/
+data/cache/
+data/images/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
