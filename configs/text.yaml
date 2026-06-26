@@ -1,0 +1,92 @@
+seed: 42
+
+project:
+  name: multimodal-risk-auditor
+  experiment_name: text-cuad-modernbert
+
+data:
+
+  train_csv: data/processed/train.csv
+
+  val_csv: data/processed/val.csv
+
+  test_csv: data/processed/test.csv
+
+training:
+
+  epochs: 30
+
+  batch_size: 2
+
+  gradient_accumulation_steps: 8
+
+  learning_rate: 0.00002
+
+  weight_decay: 0.01
+
+  warmup_ratio: 0.1
+
+  early_stopping_patience: 5
+
+  num_workers: 2
+
+optimizer:
+  name: adamw
+
+scheduler:
+  name: cosine
+  warmup_ratio: 0.1
+
+evaluation:
+  threshold: 0.5
+
+paths:
+
+  checkpoint_dir: artifacts/checkpoints
+
+  best_checkpoint_dir: artifacts/checkpoints/best
+
+  last_checkpoint_dir: artifacts/checkpoints/last
+
+  model_dir: artifacts/models/final
+
+  logs_dir: artifacts/logs
+
+vision:
+  enabled: false
+
+text:
+
+  backbone: answerdotai/ModernBERT-base
+
+  max_length: 512
+
+  dropout: 0.30
+
+  num_labels: 41
+
+classifier:
+  num_labels: 41
+  hidden_dim: 512
+  dropout: 0.3
+
+hardware:
+  device: cuda
+  mixed_precision: fp16
+
+logging:
+  log_every: 10
+
+checkpoint:
+  save_best_only: true
+  save_last: true
+
+resume:
+  enabled: true
+
+freeze:
+  text_encoder: false
+  vision_encoder: false
+
+mlflow:
+  log_model: true

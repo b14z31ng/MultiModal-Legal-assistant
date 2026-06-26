@@ -1,4 +1,5 @@
-import torch
+from __future__ import annotations
+
 import torch.nn as nn
 
 from transformers import AutoModel
@@ -6,44 +7,41 @@ from transformers import AutoModel
 
 class TextEncoder(nn.Module):
     """
-    DeBERTa-v3-Large text encoder.
+    ModernBERT encoder.
 
-    Returns the CLS embedding for multimodal fusion.
+    Input
+    -----
+    input_ids
+    attention_mask
+
+    Output
+    ------
+    768-dimensional CLS embedding
     """
 
     def __init__(
         self,
-        model_name="microsoft/deberta-v3-large",
-        dropout=0.1,
+        model_name="answerdotai/ModernBERT-base",
+        dropout=0.30,
     ):
 
         super().__init__()
 
-        print("=" * 60)
-        print("Building Text Encoder")
-        print("=" * 60)
-        print(f"Backbone : {model_name}")
-
-        self.encoder = AutoModel.from_pretrained(
+        self.backbone = AutoModel.from_pretrained(
             model_name,
         )
 
-        self.hidden_size = (
-            self.encoder.config.hidden_size
-        )
+        # Reduce VRAM usage during training
+        self.backbone.gradient_checkpointing_enable()
 
         self.dropout = nn.Dropout(
             dropout,
         )
 
-        print(
-            f"Hidden Size : {self.hidden_size}"
-        )
-
     @property
     def output_dim(self):
 
-        return self.hidden_size
+        return self.backbone.config.hidden_size
 
     def forward(
         self,
@@ -51,7 +49,7 @@ class TextEncoder(nn.Module):
         attention_mask,
     ):
 
-        outputs = self.encoder(
+        outputs = self.backbone(
 
             input_ids=input_ids,
 
@@ -59,10 +57,22 @@ class TextEncoder(nn.Module):
 
         )
 
-        cls = outputs.last_hidden_state[:, 0]
+        ####################################################
+        # Masked Mean Pooling
+        ####################################################
 
-        cls = self.dropout(
-            cls,
+        token_embeddings = outputs.last_hidden_state
+
+        mask = attention_mask.unsqueeze(-1).float()
+
+        summed = (token_embeddings * mask).sum(dim=1)
+
+        counts = mask.sum(dim=1).clamp(min=1e-9)
+
+        pooled = summed / counts
+
+        pooled = self.dropout(
+            pooled,
         )
 
-        return cls
+        return pooled
