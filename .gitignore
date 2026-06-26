@@ -16,7 +16,9 @@ venv/
 mlruns/
 mlflow.db
 artifacts/mlflow/
-
+docs/
+logs/
+tests/
 # Checkpoints
 artifacts/checkpoints/
 

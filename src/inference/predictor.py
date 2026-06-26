@@ -221,7 +221,7 @@ class Predictor:
 
         input_ids, attention_mask = self.preprocess_text(
 
-            document.image
+            document.text
 
         )
 

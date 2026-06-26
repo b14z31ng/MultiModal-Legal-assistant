@@ -30,7 +30,7 @@ class MultiModalModel(nn.Module):
 
         text_backbone="answerdotai/ModernBERT-base",
 
-        document_classes=16,
+        document_classes=6,
 
         fusion_dim=1024,
 

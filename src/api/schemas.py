@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from pydantic import BaseModel
+from typing import List, Optional
+
+from pydantic import BaseModel, Field
 
 
 class HealthResponse(BaseModel):
@@ -10,6 +12,14 @@ class HealthResponse(BaseModel):
     device: str
 
     model_loaded: bool
+
+
+class ClauseDetail(BaseModel):
+    """Individual detected clause with probability."""
+
+    clause: str
+
+    probability: float
 
 
 class PredictResponse(BaseModel):
@@ -24,7 +34,7 @@ class PredictResponse(BaseModel):
 
     recommendation: str
 
-    high_risk_clauses: list
+    high_risk_clauses: List[ClauseDetail]
 
     source: str | None = None
 
@@ -35,3 +45,61 @@ class PredictResponse(BaseModel):
     page_count: int | None = None
 
     ocr_engine: str | None = None
+
+    ocr_text: str | None = None
+
+    execution_time_seconds: float | None = None
+
+
+class BatchPredictResponse(BaseModel):
+    """Response for batch prediction endpoint."""
+
+    results: List[PredictResponse]
+
+    total_files: int
+
+    total_execution_time_seconds: float
+
+
+class ModelInfoResponse(BaseModel):
+    """Response for model information endpoint."""
+
+    model_name: str
+
+    vision_backbone: str
+
+    text_backbone: str
+
+    document_classes: int
+
+    clause_classes: int
+
+    device: str
+
+    total_parameters: int
+
+    trainable_parameters: int
+
+
+class VersionResponse(BaseModel):
+    """Response for version endpoint."""
+
+    api_version: str
+
+    python_version: str
+
+    pytorch_version: str
+
+    cuda_available: bool
+
+    cuda_version: str | None = None
+
+
+class ErrorResponse(BaseModel):
+    """Standard error response."""
+
+    error: str
+
+    detail: str | None = None
+
+    status_code: int = 500
