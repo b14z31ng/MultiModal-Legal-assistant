@@ -20,17 +20,18 @@ logger = get_api_logger()
 
 @asynccontextmanager
 async def lifespan(application: FastAPI):
-    """Application startup and shutdown lifecycle handler.
+    """Application startup and shutdown lifecycle handler."""
 
-    Args:
-        application: The FastAPI application instance.
-    """
     logger.info(
         "Starting Multimodal Legal Risk Auditor API (Python %s)",
         sys.version.split()[0],
     )
+
     yield
-    logger.info("Shutting down API")
+
+    logger.info(
+        "Shutting down API",
+    )
 
 
 app = FastAPI(
@@ -50,49 +51,68 @@ app = FastAPI(
 
 
 # ---------------------------------------------------------
-# CORS — Allow Streamlit (port 8501) and local development
+# CORS
 # ---------------------------------------------------------
+
 app.add_middleware(
+
     CORSMiddleware,
+
     allow_origins=["*"],
+
     allow_credentials=True,
+
     allow_methods=["*"],
+
     allow_headers=["*"],
+
 )
 
 
 # ---------------------------------------------------------
 # Custom Middleware
 # ---------------------------------------------------------
-app.add_middleware(ErrorHandlingMiddleware)
-app.add_middleware(RequestLoggingMiddleware)
+
+app.add_middleware(
+    ErrorHandlingMiddleware,
+)
+
+app.add_middleware(
+    RequestLoggingMiddleware,
+)
 
 
 # ---------------------------------------------------------
 # Exception Handlers
 # ---------------------------------------------------------
+
 @app.exception_handler(ValueError)
 async def value_error_handler(
     request: Request,
     exc: ValueError,
 ) -> JSONResponse:
-    """Handle ValueError with a 400 response.
+    """Handle ValueError."""
 
-    Args:
-        request: The incoming request.
-        exc: The ValueError exception.
+    logger.warning(
+        "ValueError on %s: %s",
+        request.url.path,
+        str(exc),
+    )
 
-    Returns:
-        JSON response with error details.
-    """
-    logger.warning("ValueError on %s: %s", request.url.path, str(exc))
     return JSONResponse(
+
         status_code=400,
+
         content={
+
             "error": "Bad request",
+
             "detail": str(exc),
+
             "status_code": 400,
+
         },
+
     )
 
 
@@ -101,28 +121,67 @@ async def file_not_found_handler(
     request: Request,
     exc: FileNotFoundError,
 ) -> JSONResponse:
-    """Handle FileNotFoundError with a 404 response.
+    """Handle FileNotFoundError."""
 
-    Args:
-        request: The incoming request.
-        exc: The FileNotFoundError exception.
+    logger.warning(
+        "FileNotFoundError on %s: %s",
+        request.url.path,
+        str(exc),
+    )
 
-    Returns:
-        JSON response with error details.
-    """
-    logger.warning("FileNotFoundError on %s: %s", request.url.path, str(exc))
     return JSONResponse(
+
         status_code=404,
+
         content={
+
             "error": "Not found",
+
             "detail": str(exc),
+
             "status_code": 404,
+
         },
+
     )
 
 
+# ---------------------------------------------------------
+# Health Endpoint
+# ---------------------------------------------------------
+
+
+
+# ---------------------------------------------------------
+# Root Endpoint
+# ---------------------------------------------------------
+
+@app.get(
+    "/",
+    tags=["System"],
+)
+async def root():
+    """
+    Root endpoint.
+    """
+
+    return {
+
+        "message": "Multimodal Legal Risk Auditor API",
+
+        "version": app.version,
+
+        "docs": "/docs",
+
+        "health": "/health",
+
+    }
+
+
+# ---------------------------------------------------------
+# API Routes
+# ---------------------------------------------------------
+
 app.include_router(
-
     router,
-
 )

@@ -1,0 +1,76 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+logs/
+*.log
+
+# MLflow
+mlruns/
+mlflow.db
+
+# Outputs
+outputs/
+
+# Data (ignore everything)
+data/
+
+# Artifacts (ignore everything)
+artifacts/
+
+# Documentation
+docs/
+
+# Tests
+tests/
+
+# Notebooks
+notebooks/
+
+# Cache
+.cache/
+.pytest_cache/
+.mypy_cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-data/
+
+# Large models
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.onnx
+*.safetensors
+
+*.egg-info/
+build/
+dist/
+
+.env
+.env.*
+
+coverage/
+
+.pytype/
+
+ruff_cache/

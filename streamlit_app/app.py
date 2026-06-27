@@ -10,6 +10,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import streamlit as st
+import os
 
 from api_client import APIClient
 from pages.home import render_home
@@ -37,17 +38,12 @@ if _CSS_PATH.exists():
 
 
 # ---- Initialize API Client ----
-def _get_client() -> APIClient:
-    """Get or create the API client singleton.
 
-    Returns:
-        APIClient instance configured with the current base URL.
-    """
-    base_url = st.session_state.get(
-        "api_base_url",
-        "http://localhost:8000",
+
+def _get_client():
+    return APIClient(
+        base_url=st.session_state.get("api_base_url")
     )
-    return APIClient(base_url=base_url)
 
 
 # ---- Sidebar Navigation ----

@@ -20,7 +20,12 @@ def render_settings(client: APIClient) -> None:
     # ---- API Configuration ----
     st.markdown("### API Configuration")
 
-    current_url = st.session_state.get("api_base_url", "http://localhost:8000")
+    import os
+
+    current_url = st.session_state.get(
+        "api_base_url",
+        os.getenv("API_URL", "http://localhost:8000"),
+    )
 
     new_url = st.text_input(
         "API Base URL",
